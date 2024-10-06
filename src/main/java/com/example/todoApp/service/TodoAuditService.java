@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 public class TodoAuditService {
 
     @Autowired
-    private TodoAuditRepository todoAuditRepository ;
+    private TodoAuditRepository todoAuditRepository;
 
     public void insertTodoAudit(String username, String actionName) {
-        todoAuditRepository.insertTodoAudit(username , actionName);
+        todoAuditRepository.insertTodoAudit(username, actionName);
     }
 
 }

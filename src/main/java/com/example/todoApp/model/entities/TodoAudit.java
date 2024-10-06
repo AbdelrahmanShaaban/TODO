@@ -24,12 +24,12 @@ public class TodoAudit {
     @Column(name = "USER_NAME")
     private String userName;
 
-    @Column(name="ACTION_NAME")
+    @Column(name = "ACTION_NAME")
     private String actionName;
 
-    @Column(name="ACTION_DATE")
+    @Column(name = "ACTION_DATE")
     private Date actionDate;
 
-    @Column(name="UPDATED_DATE")
+    @Column(name = "UPDATED_DATE")
     private String actionUpdatedDate;
 }

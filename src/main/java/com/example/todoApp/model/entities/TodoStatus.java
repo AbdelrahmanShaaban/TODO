@@ -16,7 +16,7 @@ public class TodoStatus {
 
     @Id
     @Column(name = "STATUS_ID")
-    private Long statusId ;
+    private Long statusId;
     @Column(name = "STATUS")
-    private String status ;
+    private String status;
 }

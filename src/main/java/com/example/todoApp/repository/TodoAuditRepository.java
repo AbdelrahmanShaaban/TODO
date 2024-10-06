@@ -10,10 +10,9 @@ import org.springframework.stereotype.Repository;
 
 @Component
 @Repository
-public interface TodoAuditRepository extends JpaRepository<TodoAudit ,Long> {
+public interface TodoAuditRepository extends JpaRepository<TodoAudit, Long> {
     @Modifying
     @Transactional
-    @Query(value="INSERT INTO TODO_AUDIT (USER_NAME,ACTION_NAME) VALUES (?,?)" ,  nativeQuery = true)
-
-    void insertTodoAudit (String username , String actionName) ;
+    @Query(value = "INSERT INTO TODO_AUDIT (USER_NAME,ACTION_NAME) VALUES (?,?)", nativeQuery = true)
+    void insertTodoAudit(String username, String actionName);
 }

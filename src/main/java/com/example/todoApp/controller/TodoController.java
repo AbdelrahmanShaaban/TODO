@@ -5,13 +5,14 @@ import com.example.todoApp.model.APIResponse;
 import com.example.todoApp.model.entities.TodoEntity;
 import com.example.todoApp.service.TodoAuditService;
 import com.example.todoApp.service.TodoService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import javax.xml.bind.ValidationException;
 
 @RestController
 @Controller
@@ -22,20 +23,16 @@ public class TodoController {
     private TodoService todoService;
 
     @Autowired
-    private TodoValidation todoValidation;
-    @Autowired
     APIResponse apiResponse;
     @Autowired
     private TodoAuditService todoAuditService;
 
 
     @GetMapping("/getAllTodo")
-    public ResponseEntity<APIResponse> getAllTodo() {
+    public ResponseEntity<APIResponse> getAllTodo() throws NotFoundException {
 
         if (todoService.getAllTodo().isEmpty() || todoService.getAllTodo() == null) {
-            apiResponse.setStatus(HttpStatus.NOT_FOUND);
-            apiResponse.setStatusCode(HttpStatus.NOT_FOUND.value());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
+            throw new NotFoundException("No Data Found") ;
         }
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setStatusCode(HttpStatus.OK.value());
@@ -54,18 +51,12 @@ public class TodoController {
     }
 
     @GetMapping("/getTodoByID")
-    public ResponseEntity<APIResponse> getTodoByID(@RequestParam Long id) {
+    public ResponseEntity<APIResponse> getTodoByID(@RequestParam Long id) throws ValidationException, NotFoundException {
 
-        APIResponse validationResponse = todoValidation.validateTodoId(Optional.ofNullable(id));
-        if (validationResponse != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(validationResponse);
-        }
+        TodoValidation.validateTodoId(id);
 
         if (todoService.findTODOById(id).isEmpty()) {
-            apiResponse.setStatus(HttpStatus.NOT_FOUND);
-            apiResponse.setStatusCode(HttpStatus.NOT_FOUND.value());
-            apiResponse.setBody("Please Enter Id Correctly or insert this id");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
+            throw new NotFoundException("Please Enter Id Correctly") ;
         }
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setStatusCode(HttpStatus.OK.value());
@@ -73,59 +64,41 @@ public class TodoController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @GetMapping("/insertNewTodo")
-    public ResponseEntity<APIResponse> insertNewTodo(@RequestBody TodoEntity todoEntity) {
+    @PostMapping("/insertNewTodo")
+    public ResponseEntity<APIResponse> insertNewTodo(@RequestBody TodoEntity todoEntity) throws ValidationException {
 
-        APIResponse validationResponse = todoValidation.validateTodoEntity(todoEntity);
+        TodoValidation.validateTodoEntity(todoEntity);
 
-        if (validationResponse != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(validationResponse);
-        }
         todoService.insertNewTODO(todoEntity);
-        todoAuditService.insertTodoAudit("Abdelrahman" , "insertNewTodo");
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setStatusCode(HttpStatus.OK.value());
-        apiResponse.setBody("Insert Successful");
+        apiResponse.setBody("Insert Successfully");
+        todoAuditService.insertTodoAudit("Abdelrahman", "insertNewTodo");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
 
     }
 
     @PostMapping("/updateTodo")
-    public ResponseEntity<APIResponse> updateTodo(@RequestBody TodoEntity todoEntity) {
-        APIResponse validationResponse = todoValidation.validateTodoEntity(todoEntity);
-
-        if (validationResponse != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(validationResponse);
-        }
+    public ResponseEntity<APIResponse> updateTodo(@RequestBody TodoEntity todoEntity) throws ValidationException, NotFoundException {
+        TodoValidation.validateTodoEntity(todoEntity);
 
         if (todoService.findTODOById(todoEntity.getTodoId()).isEmpty()) {
-            apiResponse.setStatus(HttpStatus.NOT_FOUND);
-            apiResponse.setStatusCode(HttpStatus.NOT_FOUND.value());
-            apiResponse.setBody("Please Enter a valid todo ID or insert new todo ID");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
+            throw new NotFoundException("Please Enter Valid Id");
         }
-
         todoService.UpdateTODO(todoEntity);
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setStatusCode(HttpStatus.OK.value());
-        apiResponse.setBody("Todo successfully updated");
+        apiResponse.setBody("Update Successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @GetMapping("/deleteTodoByID")
-    public ResponseEntity<APIResponse> deleteTodoByID(@RequestParam Long id) {
+    @DeleteMapping("/deleteTodoByID")
+    public ResponseEntity<APIResponse> deleteTodoByID(@RequestParam Long id) throws ValidationException, NotFoundException {
 
-        APIResponse validationResponse = todoValidation.validateTodoId(Optional.ofNullable(id));
-
-        if (validationResponse != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(validationResponse);
-        }
+        TodoValidation.validateTodoId(id);
 
         if (todoService.findTODOById(id).isEmpty()) {
-            apiResponse.setStatus(HttpStatus.NOT_FOUND);
-            apiResponse.setStatusCode(HttpStatus.NOT_FOUND.value());
-            apiResponse.setBody("Please Enter a valid todo ID");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
+            throw new NotFoundException("Please Enter a valid todo ID") ;
         }
 
         todoService.deleteTodoByID(id);
@@ -138,7 +111,6 @@ public class TodoController {
     @GetMapping("/getTodoBySearch")
     public ResponseEntity<APIResponse> getTodoBySearch(@RequestBody TodoEntity todoEntity) {
 
-        todoService.getTodoBySearch(todoEntity);
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setStatusCode(HttpStatus.OK.value());
         apiResponse.setBody(todoService.getTodoBySearch(todoEntity));
@@ -147,10 +119,9 @@ public class TodoController {
 
     @GetMapping("/searchSpecification")
     public ResponseEntity<APIResponse> searchSpecification(@RequestParam(defaultValue = "") String columnName,
-                                                           @RequestParam(defaultValue = "") String value) {
+                                                           @RequestParam(defaultValue = "") String value) throws ValidationException, NotFoundException {
 
-
-        APIResponse validationResponse = todoValidation.validateColumnName(columnName);
+        TodoValidation.validateColumnName(columnName);
         if (columnName.isEmpty() && value.isEmpty()) {
             apiResponse.setStatus(HttpStatus.OK);
             apiResponse.setStatusCode(HttpStatus.OK.value());
@@ -158,26 +129,44 @@ public class TodoController {
             return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
         }
 
-        if (validationResponse != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(validationResponse);
-        }
-
         if (value.isEmpty()) {
-            apiResponse.setStatus(HttpStatus.BAD_REQUEST);
-            apiResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
-            apiResponse.setBody("Please Enter a value");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+            TodoValidation.createAPIResponse("Please Enter Value");
         }
 
         if (todoService.searchSpecification(columnName, value).isEmpty()) {
-            apiResponse.setStatus(HttpStatus.NOT_FOUND);
-            apiResponse.setStatusCode(HttpStatus.NOT_FOUND.value());
-            apiResponse.setBody("No Data Found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
+            throw new NotFoundException("No Data Found");
         }
+
         apiResponse.setStatus(HttpStatus.OK);
         apiResponse.setStatusCode(HttpStatus.OK.value());
         apiResponse.setBody(todoService.searchSpecification(columnName, value));
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PostMapping("/insertNewTodoUsingSave")
+    public ResponseEntity<APIResponse> insertNewTodoUsingSave(@RequestBody TodoEntity todoEntity) throws ValidationException {
+
+        TodoValidation.validateTodoEntity(todoEntity);
+        todoAuditService.insertTodoAudit("Abdelrahman", "insertNewTodo");
+        apiResponse.setStatus(HttpStatus.OK);
+        apiResponse.setStatusCode(HttpStatus.OK.value());
+        apiResponse.setBody(todoService.insertNewTODOUseSave(todoEntity));
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+
+    }
+
+    @PutMapping("/updateTodoUsingSave")
+    public ResponseEntity<APIResponse> updateTodoUsingSave(@RequestBody TodoEntity todoEntity) throws ValidationException, NotFoundException {
+        TodoValidation.validateTodoEntity(todoEntity);
+
+        if (todoService.findTODOById(todoEntity.getTodoId()).isEmpty()) {
+            throw new NotFoundException("Please Enter Valid Id");
+        }
+        TodoEntity updatedTodo = todoService.UpdateTODOUseSave(todoEntity);
+        apiResponse.setStatus(HttpStatus.OK);
+        apiResponse.setStatusCode(HttpStatus.OK.value());
+        apiResponse.setBody(updatedTodo);
+        return ResponseEntity.ok(apiResponse);
+
     }
 }

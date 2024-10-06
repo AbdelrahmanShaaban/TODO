@@ -3,6 +3,7 @@ package com.example.todoApp.service;
 import com.example.todoApp.model.entities.TodoEntity;
 import com.example.todoApp.repository.TodoRepository;
 import com.example.todoApp.specification.TodoSpecification;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -35,14 +36,12 @@ public class TodoService {
 
     public void UpdateTODO(TodoEntity todoEntity) {
         todoRepository.updateTodo(
-
                 todoEntity.getTitle(),
                 todoEntity.getDescription(),
                 todoEntity.getStatusId(),
                 todoEntity.getStartDate(),
                 todoEntity.getDeadlineDate(),
-                todoEntity.getTodoId()
-        );
+                todoEntity.getTodoId());
     }
 
     public void deleteTodoByID(Long id) {
@@ -62,5 +61,12 @@ public class TodoService {
         return todoRepository.findAll(TodoSpecification.search(columnName, value));
     }
 
+    public TodoEntity insertNewTODOUseSave(TodoEntity todoEntity) {
+        return todoRepository.save(todoEntity);
+    }
 
+    public TodoEntity UpdateTODOUseSave(TodoEntity todoEntity) {
+        return todoRepository.save(todoEntity);
+
+    }
 }
