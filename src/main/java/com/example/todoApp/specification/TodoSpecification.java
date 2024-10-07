@@ -11,7 +11,8 @@ public class TodoSpecification {
                 case "todoId" -> criteriaBuilder.equal(root.get("todoId"), value);
                 case "title" -> criteriaBuilder.like(root.get("title"), "%" + value + "%");
                 case "description" -> criteriaBuilder.like(root.get("description"), "%" + value + "%");
-                case "statusId" -> criteriaBuilder.equal(root.get("statusId"), value);
+                case "statusId" -> criteriaBuilder.equal(root.join("todoStatus").get("statusId"), Long.valueOf(value));
+                case "status" -> criteriaBuilder.like(root.join("todoStatus").get("status"), "%" + value + "%");
                 default -> throw new IllegalArgumentException("Invalid column: " + columnName);
             };
         };

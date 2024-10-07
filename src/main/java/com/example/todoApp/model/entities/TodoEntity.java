@@ -35,8 +35,9 @@ public class TodoEntity {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "STATUS_ID")
-    private Long statusId;
+    @ManyToOne
+    @JoinColumn(name = "STATUS_ID")
+    private TodoStatus todoStatus;
 
     @Column(name = "START_DATE")
     @JsonFormat(pattern = "yyyy-MM-dd")

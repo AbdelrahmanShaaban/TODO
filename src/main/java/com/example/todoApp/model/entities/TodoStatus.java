@@ -1,5 +1,6 @@
 package com.example.todoApp.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,5 +19,6 @@ public class TodoStatus {
     @Column(name = "STATUS_ID")
     private Long statusId;
     @Column(name = "STATUS")
+    @JsonIgnore
     private String status;
 }

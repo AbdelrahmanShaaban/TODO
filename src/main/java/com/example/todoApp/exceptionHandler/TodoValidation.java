@@ -16,14 +16,14 @@ public class TodoValidation {
 
     @Autowired
     APIResponse apiResponse;
-
-    private static final Set<String> VALID_TODO_COLUMNS = Set.of("todoId", "title", "description", "statusId", "startDate", "deadlineDate");
+    private static final Set<String> VALID_TODO_COLUMNS = Set.of("todoId", "title", "description", "statusId", "status", "startDate", "deadlineDate");
 
     public static void validateColumnName(String columnName) throws ValidationException {
 
         if (!VALID_TODO_COLUMNS.contains(columnName)) {
             createAPIResponse("Invalid column name: " + columnName);
         }
+
     }
 
     public static void validateTodoId(Long todoId) throws ValidationException {
@@ -54,7 +54,7 @@ public class TodoValidation {
 
         }
 
-        if (todoEntity.getStatusId() == null) {
+        if (todoEntity.getTodoStatus() == null) {
             createAPIResponse("Please Enter Status Id");
         }
     }

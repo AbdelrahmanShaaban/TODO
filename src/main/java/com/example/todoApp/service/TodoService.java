@@ -21,6 +21,7 @@ public class TodoService {
         return todoRepository.findAll();
     }
 
+
     public List<TodoEntity> getAllTodoBySort(String sortBy, String direction) {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         return todoRepository.findAll(sort);
@@ -30,32 +31,10 @@ public class TodoService {
         return todoRepository.findById(id);
     }
 
-    public void insertNewTODO(TodoEntity todoEntity) {
-        todoRepository.insertNewTodo(todoEntity.getTodoId(), todoEntity.getTitle(), todoEntity.getDescription(), todoEntity.getStatusId(), todoEntity.getStartDate(), todoEntity.getDeadlineDate());
-    }
-
-    public void UpdateTODO(TodoEntity todoEntity) {
-        todoRepository.updateTodo(
-                todoEntity.getTitle(),
-                todoEntity.getDescription(),
-                todoEntity.getStatusId(),
-                todoEntity.getStartDate(),
-                todoEntity.getDeadlineDate(),
-                todoEntity.getTodoId());
-    }
-
     public void deleteTodoByID(Long id) {
         todoRepository.deleteById(id);
     }
 
-    public List<TodoEntity> getTodoBySearch(TodoEntity todoEntity) {
-        return todoRepository.getTodoBySearch(
-                todoEntity.getTodoId(),
-                todoEntity.getTitle(),
-                todoEntity.getDescription(),
-                todoEntity.getStatusId()
-        );
-    }
 
     public List<TodoEntity> searchSpecification(String columnName, String value) {
         return todoRepository.findAll(TodoSpecification.search(columnName, value));
@@ -69,4 +48,29 @@ public class TodoService {
         return todoRepository.save(todoEntity);
 
     }
+    /*
+    public void insertNewTODO(TodoEntity todoEntity) {
+        // todoRepository.insertNewTodo(todoEntity.getTodoId(), todoEntity.getTitle(), todoEntity.getDescription(), todoEntity.getStatusId(), todoEntity.getStartDate(), todoEntity.getDeadlineDate());
+    }
+
+    public void UpdateTODO(TodoEntity todoEntity) {
+//        todoRepository.updateTodo(
+//                todoEntity.getTitle(),
+//                todoEntity.getDescription(),
+//                todoEntity.getStatusId(),
+//                todoEntity.getStartDate(),
+//                todoEntity.getDeadlineDate(),
+//                todoEntity.getTodoId());
+    }
+
+    public List<TodoEntity> getTodoBySearch(TodoEntity todoEntity) {
+//        return todoRepository.getTodoBySearch(
+//                todoEntity.getTodoId(),
+//                todoEntity.getTitle(),
+//                todoEntity.getDescription(),
+//                todoEntity.getStatusId()
+//        );
+        return null ;
+    }
+    */
 }

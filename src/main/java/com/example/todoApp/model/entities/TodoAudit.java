@@ -30,6 +30,4 @@ public class TodoAudit {
     @Column(name = "ACTION_DATE")
     private Date actionDate;
 
-    @Column(name = "UPDATED_DATE")
-    private String actionUpdatedDate;
 }
