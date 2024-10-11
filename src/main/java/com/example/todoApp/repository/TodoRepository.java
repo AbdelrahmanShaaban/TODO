@@ -23,6 +23,10 @@ public interface TodoRepository extends JpaRepository<TodoEntity, Long>, JpaSpec
     @NonNull
     List<TodoEntity> findAll(@NonNull Sort sort);
 
+    List<TodoEntity> findByTitleContainingAndTodoStatusStatusContaining(String title , String status) ;
+
+    Long countByTitleContainingAndTodoStatusStatusContaining(String title , String status) ;
+
 //    @Modifying
 //    @Transactional
 //  /*  @Query("FROM TodoEntity t " +

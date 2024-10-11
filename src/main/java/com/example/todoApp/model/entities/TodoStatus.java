@@ -19,6 +19,5 @@ public class TodoStatus {
     @Column(name = "STATUS_ID")
     private Long statusId;
     @Column(name = "STATUS")
-    @JsonIgnore
     private String status;
 }

@@ -6,13 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Table(name = "TODO")
@@ -25,8 +18,10 @@ public class TodoEntity {
 
     @Id
     @Column(name = "TODO_ID")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TODO_ID_SEQ")
-    @SequenceGenerator(name = "TODO_ID_SEQ", sequenceName = "TODO_ID_SEQ", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TODO_ID_SEQ")
+//    @SequenceGenerator(name = "TODO_ID_SEQ", sequenceName = "TODO_ID_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "TODO_ID_SEQ")
+   @SequenceGenerator(name = "TODO_ID_SEQ", sequenceName = "TODO_ID_SEQ", allocationSize = 1)
     private Long todoId;
 
     @Column(name = "TITLE")
@@ -35,9 +30,10 @@ public class TodoEntity {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST , fetch = FetchType.EAGER)
     @JoinColumn(name = "STATUS_ID")
     private TodoStatus todoStatus;
+
 
     @Column(name = "START_DATE")
     @JsonFormat(pattern = "yyyy-MM-dd")

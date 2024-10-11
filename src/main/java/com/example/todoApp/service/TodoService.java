@@ -1,7 +1,9 @@
 package com.example.todoApp.service;
 
 import com.example.todoApp.model.entities.TodoEntity;
+import com.example.todoApp.model.entities.TodoStatus;
 import com.example.todoApp.repository.TodoRepository;
+import com.example.todoApp.repository.TodoStatusRepository;
 import com.example.todoApp.specification.TodoSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ public class TodoService {
     @Autowired
     private TodoRepository todoRepository;
 
+
+
     public List<TodoEntity> getAllTodo() {
         return todoRepository.findAll();
     }
@@ -27,9 +31,10 @@ public class TodoService {
         return todoRepository.findAll(sort);
     }
 
-    public Optional<TodoEntity> findTODOById(Long id) {
-        return todoRepository.findById(id);
+    public TodoEntity findTODOById(Long id) {
+        return todoRepository.findById(id).orElseThrow();
     }
+
 
     public void deleteTodoByID(Long id) {
         todoRepository.deleteById(id);
@@ -40,9 +45,19 @@ public class TodoService {
         return todoRepository.findAll(TodoSpecification.search(columnName, value));
     }
 
+    public List<TodoEntity> findTitleAndStatus(String title, String status) {
+        return todoRepository.findByTitleContainingAndTodoStatusStatusContaining(title , status);
+    }
+
+    public Long countTitleAndStatus(String title, String status) {
+        return todoRepository.countByTitleContainingAndTodoStatusStatusContaining(title , status);
+    }
+
     public TodoEntity insertNewTODOUseSave(TodoEntity todoEntity) {
+
         return todoRepository.save(todoEntity);
     }
+
 
     public TodoEntity UpdateTODOUseSave(TodoEntity todoEntity) {
         return todoRepository.save(todoEntity);

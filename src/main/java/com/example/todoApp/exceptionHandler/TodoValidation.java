@@ -34,6 +34,12 @@ public class TodoValidation {
 
     }
 
+    public static void validateStatus(String status) throws ValidationException {
+        if (status == null || status.isEmpty()) {
+            createAPIResponse("Please Enter Status");
+        }
+    }
+
     public static void validateTodoEntity(TodoEntity todoEntity) throws ValidationException {
 
         if (todoEntity.getStartDate() == null || todoEntity.getDeadlineDate() == null) {
